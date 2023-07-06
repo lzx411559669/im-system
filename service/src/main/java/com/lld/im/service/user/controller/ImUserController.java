@@ -1,0 +1,34 @@
+package com.lld.im.service.user.controller;
+
+import com.lld.im.common.ResponseVO;
+import com.lld.im.service.user.model.req.DeleteUserReq;
+import com.lld.im.service.user.model.req.ImportUserReq;
+import com.lld.im.service.user.service.ImUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * @author liuzhengxing
+ * @version v1.0
+ * @package com.lld.im.service.user.controller
+ * @data 2023/7/4 21:29
+ */
+@RestController
+@RequestMapping("v1/user")
+public class ImUserController {
+    @Autowired
+    ImUserService imUserService;
+
+    @PostMapping("importUser")
+    public ResponseVO importUser(@RequestBody ImportUserReq req, Integer appId) {
+        return imUserService.importUser(req);
+    }
+
+    @DeleteMapping("/deleteUser")
+    public ResponseVO deleteUser(@RequestBody @Validated DeleteUserReq req, Integer appId) {
+        req.setAppId(appId);
+        return imUserService.deleteUser(req);
+    }
+
+}

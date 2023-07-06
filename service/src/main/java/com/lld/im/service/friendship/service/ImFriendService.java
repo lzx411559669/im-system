@@ -1,0 +1,38 @@
+package com.lld.im.service.friendship.service;
+
+import com.lld.im.common.ResponseVO;
+import com.lld.im.common.model.RequestBase;
+import com.lld.im.service.friendship.model.req.*;
+
+/**
+ * @author liuzhengxing
+ * @version v1.0
+ * @package com.lld.im.service.friendship.service
+ * @data 2023/7/5 23:10
+ */
+
+public interface ImFriendService {
+    public ResponseVO importFriendShip(ImporFriendShipReq req);
+
+    public ResponseVO addFriend(AddFriendReq req);
+
+    public ResponseVO updateFriend(UpdateFriendReq req);
+
+    public ResponseVO deleteFriend(DeleteFriendReq req);
+
+    public ResponseVO deleteAllFriend(DeleteFriendReq req);
+//
+//    public ResponseVO getAllFriendShip(GetAllFriendShipReq req);
+//
+//    public ResponseVO getRelation(GetRelationReq req);
+//
+//    public ResponseVO doAddFriend(RequestBase requestBase, String fromId, FriendDto dto, Integer appId);
+//
+//    public ResponseVO checkFriendship(CheckFriendShipReq req);
+//
+//    public ResponseVO addBlack(AddFriendShipBlackReq req);
+//
+//    public ResponseVO deleteBlack(DeleteBlackReq req);
+
+    public ResponseVO checkBlck(CheckFriendShipReq req);
+}
