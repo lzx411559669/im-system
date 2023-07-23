@@ -9,6 +9,7 @@ import com.lld.im.common.enums.FriendShipStatusEnum;
 import com.lld.im.service.friendship.dao.ImFriendShipEntity;
 import com.lld.im.service.friendship.dao.mapper.ImFriendShipMapper;
 import com.lld.im.service.friendship.model.req.*;
+import com.lld.im.service.friendship.model.resp.CheckFriendShipResp;
 import com.lld.im.service.friendship.model.resp.ImportFriendShipResp;
 import com.lld.im.service.friendship.service.ImFriendService;
 import com.lld.im.service.user.dao.ImUserDataEntity;
@@ -21,6 +22,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author liuzhengxing
@@ -162,6 +166,27 @@ public class ImFriendServiceImpl implements ImFriendService {
         return ResponseVO.successResponse();
     }
 
+    @Override
+    public ResponseVO getAllFriendShip(GetAllFriendShipReq req) {
+        QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
+        query.eq("app_id",req.getAppId());
+        query.eq("from_id",req.getFromId());
+        return ResponseVO.successResponse(imFriendShipMapper.selectList(query));
+    }
+
+    @Override
+    public ResponseVO getRelation(GetRelationReq req) {
+        QueryWrapper<ImFriendShipEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("from_id",req.getFormId())
+                .eq("to_id",req.getToId())
+                .eq("app_id",req.getAppId());
+        ImFriendShipEntity entity = imFriendShipMapper.selectOne(queryWrapper);
+        if (entity == null){
+            return ResponseVO.errorResponse(FriendShipErrorCode.REPEATSHIP_IS_NOT_EXIST);
+        }
+        return ResponseVO.successResponse(entity);
+    }
+
     public ResponseVO doUpdate(String fromId, FriendDto dto, Integer appId){
         UpdateWrapper<ImFriendShipEntity> updateWrapper = new UpdateWrapper<>();
         updateWrapper.lambda().set(ImFriendShipEntity::getAddSource,dto.getAddSource())
@@ -257,6 +282,29 @@ public class ImFriendServiceImpl implements ImFriendService {
 
     @Override
     public ResponseVO checkBlck(CheckFriendShipReq req) {
-        return null;
+        Map<String, Integer> result
+                = req.getToIds().stream()
+                .collect(Collectors.toMap(Function.identity(), s -> 0));
+
+        List<CheckFriendShipResp> resp = new ArrayList<>();
+        //单关系校验
+        if (req.getCheckType()==0){
+            resp = imFriendShipMapper.checkFriendShip(req);
+
+        }else{
+            resp = imFriendShipMapper.checkFriendShipBoth(req);
+        }
+        Map<String, Integer> collected = resp.stream().collect(Collectors.toMap(CheckFriendShipResp::getToId, CheckFriendShipResp::getStatus));
+
+        for (String toId: result.keySet()){
+            if (!collected.containsKey(toId)){
+                CheckFriendShipResp checkFriendShipResp = new CheckFriendShipResp();
+                checkFriendShipResp.setFromId(req.getFromId());
+                checkFriendShipResp.setToId(toId);
+                checkFriendShipResp.setStatus(result.get(toId));
+                resp.add(checkFriendShipResp);
+            }
+        }
+        return ResponseVO.successResponse(resp);
     }
 }

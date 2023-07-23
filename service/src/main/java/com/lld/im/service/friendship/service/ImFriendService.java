@@ -21,10 +21,10 @@ public interface ImFriendService {
     public ResponseVO deleteFriend(DeleteFriendReq req);
 
     public ResponseVO deleteAllFriend(DeleteFriendReq req);
-//
-//    public ResponseVO getAllFriendShip(GetAllFriendShipReq req);
-//
-//    public ResponseVO getRelation(GetRelationReq req);
+
+    public ResponseVO getAllFriendShip(GetAllFriendShipReq req);
+
+    public ResponseVO getRelation(GetRelationReq req);
 //
 //    public ResponseVO doAddFriend(RequestBase requestBase, String fromId, FriendDto dto, Integer appId);
 //
