@@ -28,11 +28,11 @@ public interface ImFriendService {
 //
 //    public ResponseVO doAddFriend(RequestBase requestBase, String fromId, FriendDto dto, Integer appId);
 //
-//    public ResponseVO checkFriendship(CheckFriendShipReq req);
+    public ResponseVO checkFriendship(CheckFriendShipReq req);
 //
-//    public ResponseVO addBlack(AddFriendShipBlackReq req);
+    public ResponseVO addBlack(AddFriendShipBlackReq req);
 //
-//    public ResponseVO deleteBlack(DeleteBlackReq req);
+    public ResponseVO deleteBlack(DeleteBlackReq req);
 
     public ResponseVO checkBlck(CheckFriendShipReq req);
 }

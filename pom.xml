@@ -22,6 +22,8 @@
     <modules>
         <module>common</module>
         <module>service</module>
+        <module>im-codec</module>
+        <module>im-tcp</module>
     </modules>
 
     <properties>
