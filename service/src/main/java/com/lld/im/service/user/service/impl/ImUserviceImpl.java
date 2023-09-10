@@ -1,20 +1,21 @@
 package com.lld.im.service.user.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lld.im.common.ResponseVO;
+import com.lld.im.common.config.AppConfig;
+import com.lld.im.common.constant.Constants;
 import com.lld.im.common.enums.DelFlagEnum;
 import com.lld.im.common.enums.UserErrorCode;
 import com.lld.im.common.exception.ApplicationException;
 import com.lld.im.service.group.service.ImGroupService;
 import com.lld.im.service.user.dao.ImUserDataEntity;
 import com.lld.im.service.user.dao.mapper.ImUserDataMapper;
-import com.lld.im.service.user.model.req.DeleteUserReq;
-import com.lld.im.service.user.model.req.GetUserInfoReq;
-import com.lld.im.service.user.model.req.ImportUserReq;
-import com.lld.im.service.user.model.req.ModifyUserInfoReq;
+import com.lld.im.service.user.model.req.*;
 import com.lld.im.service.user.model.resp.GetUserInfoResp;
 import com.lld.im.service.user.model.resp.ImportUserResp;
 import com.lld.im.service.user.service.ImUserService;
+import com.lld.im.service.utils.CallbackService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,12 @@ public class ImUserviceImpl implements ImUserService {
 
     @Autowired
    private ImGroupService imGroupService;
+
+    @Autowired
+    private AppConfig appConfig;
+
+    @Autowired
+    private CallbackService callbackService;
 
     @Override
     public ResponseVO importUser(ImportUserReq req) {
@@ -167,9 +174,19 @@ public class ImUserviceImpl implements ImUserService {
         update.setUserId(null);
         int update1 = imUserDataMapper.update(update, query);
         if(update1 == 1){
+            //TODO 回调
+            if (appConfig.isModifyUserAfterCallback()){
+                callbackService.callback(req.getAppId(), Constants.CallbackCommand.ModifyUserAfter, JSONObject.toJSONString(req));
+            }
+
             return ResponseVO.successResponse();
         }
         throw new ApplicationException(UserErrorCode.MODIFY_USER_ERROR);
+    }
+
+    @Override
+    public ResponseVO login(LoginReq req) {
+        return ResponseVO.successResponse();
     }
 
 }
